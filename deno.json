@@ -1,0 +1,20 @@
+{
+    "name": "@smallweb/excalidraw",
+    "version": "0.2.0",
+    "exports": {
+        ".": "./mod.ts"
+    },
+    "tasks": {
+        "install-frontend-deps": "cd frontend && npm install",
+        "build-frontend": "cd frontend && npm run build",
+        "embed-frontend": "deno run -A ./embedder.ts build",
+        "build": "deno task build-frontend && deno task embed-frontend"
+    },
+    "publish": {
+        "include": [
+            "mod.ts",
+            "dist",
+            "file_server.ts"
+        ]
+    }
+}
