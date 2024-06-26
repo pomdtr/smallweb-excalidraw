@@ -35,7 +35,9 @@ export function createExcalidraw(params: AppParams): RequestHandler {
             const svgBytes = new TextEncoder().encode(svg);
             await params.set(keys.svg, svgBytes);
 
-            return c.json(null, 204);
+            return new Response(null, {
+                status: 204,
+            });
         });
 
         app.get("/png", async () => {
