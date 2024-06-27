@@ -3,19 +3,21 @@ import { createExcalidraw } from "./mod.ts";
 import { join } from "jsr:@std/path@0.225.0/join";
 
 const excalidraw = createExcalidraw({
-    get: async (key: string) => {
-        try {
-            return await Deno.readFile(join("blobs", key));
-        } catch (_e) {
-            return null;
-        }
-    },
-    set: async (key, data) => {
-        if (!await exists("./blobs")) {
-            await Deno.mkdir("./blobs");
-        }
+    store: {
+        get: async (key: string) => {
+            try {
+                return await Deno.readFile(join("blobs", key));
+            } catch (_e) {
+                return null;
+            }
+        },
+        set: async (key, data) => {
+            if (!await exists("./blobs")) {
+                await Deno.mkdir("./blobs");
+            }
 
-        Deno.writeFileSync(join("blobs", key), data);
+            Deno.writeFileSync(join("blobs", key), data);
+        },
     },
 });
 
