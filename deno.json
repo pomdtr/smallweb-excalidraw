@@ -1,8 +1,9 @@
 {
     "name": "@smallweb/excalidraw",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "exports": {
-        ".": "./mod.ts"
+        ".": "./mod.ts",
+        "store": "./store.ts"
     },
     "tasks": {
         "install-frontend-deps": "cd frontend && npm install",
