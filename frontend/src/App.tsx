@@ -108,7 +108,6 @@ function App() {
         const previousVersion = sceneVersion;
         const currentVersion = getSceneVersion(elements);
         if (currentVersion !== previousVersion) {
-          console.log("Scene updated", currentVersion);
           setSceneVersion(currentVersion);
         }
       }}
