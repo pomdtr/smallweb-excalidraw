@@ -1,6 +1,6 @@
 {
     "name": "@smallweb/excalidraw",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "exports": {
         ".": "./mod.ts"
     },
@@ -13,6 +13,7 @@
     "publish": {
         "include": [
             "mod.ts",
+            "store.ts",
             "dist",
             "file_server.ts"
         ]
