@@ -3,7 +3,7 @@
     "version": "0.3.3",
     "exports": {
         ".": "./mod.ts",
-        "store": "./store.ts"
+        "./store": "./store.ts"
     },
     "tasks": {
         "install-frontend-deps": "cd frontend && npm install",
