@@ -1,5 +1,4 @@
 import { serveDir } from "./file_server.ts";
-import dir from "./dist/dir.ts";
 import { Hono } from "jsr:@hono/hono@4.4.8";
 import { decodeBase64 } from "jsr:@std/encoding@0.224.0/base64";
 
@@ -63,7 +62,7 @@ export function createExcalidraw({ store }: ExcalidrawConfig): RequestHandler {
 
         app.get("/*", (c) => {
             return serveDir(c.req.raw, {
-                dir,
+                fsRoot: "frontend/dist",
             });
         });
 

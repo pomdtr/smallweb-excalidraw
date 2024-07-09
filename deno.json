@@ -15,7 +15,7 @@
         "include": [
             "mod.ts",
             "store.ts",
-            "dist",
+            "frontend/dist",
             "file_server.ts"
         ]
     }

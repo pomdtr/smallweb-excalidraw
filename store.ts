@@ -7,7 +7,7 @@ export class LocalStore {
         this.basePath = join(Deno.cwd(), basePath);
     }
 
-    async get(key: string) {
+    async get(key: string): Promise<Uint8Array | null> {
         try {
             return await Deno.readFile(join(this.basePath, key));
         } catch (_e) {
@@ -15,7 +15,7 @@ export class LocalStore {
         }
     }
 
-    async set(key: string, data: Uint8Array) {
+    async set(key: string, data: Uint8Array): Promise<void> {
         if (!await exists(this.basePath)) {
             await Deno.mkdir(this.basePath);
         }
