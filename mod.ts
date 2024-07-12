@@ -62,7 +62,7 @@ export function createExcalidraw({ store }: ExcalidrawConfig): RequestHandler {
 
         app.get("/*", (c) => {
             return serveDir(c.req.raw, {
-                fsRoot: "frontend/dist",
+                fsRoot: import.meta.resolve("./frontend/dist"),
             });
         });
 

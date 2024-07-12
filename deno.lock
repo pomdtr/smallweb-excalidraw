@@ -9,6 +9,7 @@
       "jsr:@deno/graph@^0.73.1": "jsr:@deno/graph@0.73.1",
       "jsr:@hono/hono@4.4.8": "jsr:@hono/hono@4.4.8",
       "jsr:@jollytoad/import-content": "jsr:@jollytoad/import-content@1.1.0",
+      "jsr:@jollytoad/import-content@1.1.0": "jsr:@jollytoad/import-content@1.1.0",
       "jsr:@nfnitloop/deno-embedder@1.4.1": "jsr:@nfnitloop/deno-embedder@1.4.1",
       "jsr:@nfnitloop/deno-embedder@^1.4.1": "jsr:@nfnitloop/deno-embedder@1.4.1",
       "jsr:@std/assert@^0.196.0": "jsr:@std/assert@0.196.0",
