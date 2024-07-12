@@ -1,7 +1,6 @@
-import { serveDir } from "./file_server.ts";
 import { Hono } from "jsr:@hono/hono@4.4.8";
 import { decodeBase64 } from "jsr:@std/encoding@0.224.0/base64";
-import dir from "./dist/dir.ts";
+import { serveDir } from "./dist/dir.ts";
 
 const keys = {
     json: "drawing.excalidraw.json",
@@ -59,9 +58,7 @@ export class Excalidraw {
         });
 
         app.get("/*", (c) => {
-            return serveDir(c.req.raw, {
-                dir,
-            });
+            return serveDir(c.req.raw);
         });
 
         return app.fetch(req);
