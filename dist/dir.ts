@@ -102,13 +102,10 @@ async function decompress(
     return new Uint8Array(buf);
 }
 
-/** A function that we can call to import a file module. */
-export type FileImporter = () => Promise<File>;
+export type FileModule = { default: FileMeta };
 
-export async function importFile(src: string): Promise<File> {
-    const mod = await import(src);
-    return new File(mod.default);
-}
+/** A function that we can call to import a file module. */
+export type FileImporter = () => Promise<FileModule>;
 
 /** We expect the embed file to pass this into Embeds. */
 export type EmbedsDef<K extends string> = Record<K, FileImporter>;
@@ -148,7 +145,8 @@ export class Embeds<K extends string = string> {
      */
     async load(filePath: K): Promise<File> {
         const importer = this.#embeds[filePath];
-        return await importer();
+        const mod = await importer();
+        return new File(mod.default);
     }
 
     /**
@@ -161,7 +159,8 @@ export class Embeds<K extends string = string> {
         const importer = this.#embeds[filePath as K];
         if (!importer) return null;
 
-        return await importer();
+        const mod = await importer();
+        return new File(mod.default);
     }
 }
 
@@ -211,33 +210,33 @@ export interface ServeDirOptions {
 }
 
 export async function serveDir(
-  req: Request,
-  options: ServeDirOptions = {},
+    req: Request,
+    options: ServeDirOptions = {},
 ): Promise<Response> {
-  let { pathname } = new URL(req.url);
-  if (pathname.endsWith("/")) {
-    pathname += "index.html";
-  }
+    let { pathname } = new URL(req.url);
+    if (pathname.endsWith("/")) {
+        pathname += "index.html";
+    }
 
-  const file = await embeds.get(pathname.slice(1));
-  if (!file) {
-    return new Response("Not found", { status: 404 });
-  }
+    const file = await embeds.get(pathname.slice(1));
+    if (!file) {
+        return new Response("Not found", { status: 404 });
+    }
 
-  const type = contentType(extname(pathname)) || "application/octet-stream";
+    const type = contentType(extname(pathname)) || "application/octet-stream";
 
-  return new Response(await file.bytes(), {
-    headers: {
-      "Content-Type": type,
-      ...options.headers,
-    },
-  });
+    return new Response(await file.bytes(), {
+        headers: {
+            "Content-Type": type,
+            ...options.headers,
+        },
+    });
 }
 
 const embeds = new Embeds({
-  "assets/index-BPvgi06w.css": () => importFile("./assets/_index-BPvgi06w.css.ts"),
-  "assets/index-DFoV5MJx.js": () => importFile("./assets/_index-DFoV5MJx.js.ts"),
-  "index.html": () => importFile("./_index.html.ts"),
+  "assets/index-BPvgi06w.css": () => import("./assets/_index-BPvgi06w.css.ts"),
+  "assets/index-DFoV5MJx.js": () => import("./assets/_index-DFoV5MJx.js.ts"),
+  "index.html": () => import("./_index.html.ts"),
 });
 
 export default embeds;
