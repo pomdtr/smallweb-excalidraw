@@ -17,8 +17,7 @@
                 "--inspect-wait",
                 "--allow-all"
             ],
-            "attachSimplePort": 9229,
-            "preLaunchTask": "deno: build"
+            "attachSimplePort": 9229
         }
     ]
 }
