@@ -8,8 +8,6 @@ const keys = {
     svg: "drawing.svg",
 };
 
-export type RequestHandler = (req: Request) => Response | Promise<Response>;
-
 export type ExcalidrawParams = {
     read: (key: string) => Promise<Uint8Array | null>;
     write: (key: string, value: Uint8Array) => Promise<void>;
@@ -17,7 +15,7 @@ export type ExcalidrawParams = {
 
 export class Excalidraw {
     constructor(private params: ExcalidrawParams) {}
-    fetch = (req: Request) => {
+    fetch = (req: Request): Response | Promise<Response> => {
         const app = new Hono();
 
         app.post("/", async (c) => {
