@@ -1,4 +1,4 @@
-import { join } from "jsr:@std/path@^0.223/join";
+import { join } from "jsr:@std/path";
 import { Excalidraw } from "./mod.ts";
 
 const excalidraw = new Excalidraw({

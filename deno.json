@@ -5,13 +5,15 @@
         ".": "./mod.ts"
     },
     "tasks": {
-        "install-frontend-deps": "cd frontend && npm install",
-        "build-frontend": "cd frontend && npm run build"
+        "install-deps": "cd frontend && npm install",
+        "build-frontend": "cd frontend && npm run build",
+        "embed": "deno run -A embedder.ts build",
+        "build": "deno task build-frontend && deno task embed"
     },
     "publish": {
         "include": [
             "mod.ts",
-            "frontend/dist",
+            "dist",
             "file_server.ts"
         ]
     }
