@@ -12,7 +12,7 @@ import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Base64 } from "js-base64";
 
-const DEBOUNCE_MS = 3000;
+const DEBOUNCE_MS = 500;
 
 function App() {
   const [sceneVersion, setSceneVersion] = React.useState(0);
@@ -36,7 +36,7 @@ function App() {
       const initialData = await loadFromBlob(blob, null, null);
       setSceneVersion(getSceneVersion(initialData.elements));
       return initialData;
-    },
+    }, { revalidateOnFocus: false, revalidateOnReconnect: false },
   );
 
   React.useEffect(() => {
