@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { decodeBase64 } from "@std/encoding";
 import * as path from "@std/path";
 import * as fs from "@std/fs"
+import * as http from "@std/http"
 import config from "./deno.json" with { type: "json" }
 
 const keys = {
@@ -76,9 +77,9 @@ export class Excalidraw {
             const filepath = path.join("frontend/dist", c.req.path === "/" ? "index.html" : c.req.path.slice(1))
 
             // Serve local files in development
-            // if (import.meta.dirname) {
-            //     return http.serveFile(c.req.raw, filepath)
-            // }
+            if (import.meta.dirname) {
+                return http.serveFile(c.req.raw, filepath)
+            }
 
             // else fetch from jsr and cache
             const req = new Request(`https://jsr.io/${config.name}/${config.version}/${filepath}`)
