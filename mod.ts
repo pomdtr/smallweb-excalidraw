@@ -1,9 +1,7 @@
 import { Hono } from "hono";
 import * as path from "@std/path";
 import * as http from "@std/http"
-import type { Storage } from "unstorage"
-import { createStorage } from "unstorage";
-import fsLiteDriver from "unstorage/drivers/fs-lite";
+import * as fs from "@std/fs"
 
 
 
@@ -11,18 +9,17 @@ export type App = {
     fetch: (req: Request) => Response | Promise<Response>;
 }
 
-export function excalidraw(storage: string | Storage): App {
-    // @ts-ignore broken types
-    const kv = typeof storage === "string" ? createStorage({ driver: fsLiteDriver({ base: storage }) }) : storage;
-
-
+export function excalidraw(rootDir: string): App {
     const app = new Hono();
+    const jsonPath = path.join(rootDir, "drawing.excalidraw.json");
+    const svgPath = path.join(rootDir, "drawing.svg");
 
     app.post("/", async (c) => {
         const { json, svg } = await c.req.json();
 
-        kv.set("drawing.excalidraw.json", json);
-        kv.set("drawing.svg", svg);
+        await fs.ensureDir(rootDir);
+        await Deno.writeTextFile(jsonPath, json);
+        await Deno.writeTextFile(svgPath, svg);
 
         return new Response(null, {
             status: 204,
@@ -30,13 +27,13 @@ export function excalidraw(storage: string | Storage): App {
     });
 
     app.get("/svg", async () => {
-        const svg = await kv.get<string>("drawing.svg");
-        if (!svg) {
+        if (!svgPath) {
             return new Response(null, {
                 status: 404,
             });
         }
 
+        const svg = await Deno.readTextFile(svgPath);
         return new Response(
             svg,
             {
@@ -48,14 +45,14 @@ export function excalidraw(storage: string | Storage): App {
     });
 
     app.get("/json", async () => {
-        const drawing = await kv.get<object>("drawing.excalidraw.json");
-        if (!drawing) {
+        if (!fs.existsSync(jsonPath)) {
             return new Response(null, {
                 status: 404,
             });
         }
 
-        return Response.json(
+        const drawing = await Deno.readTextFile(jsonPath);
+        return new Response(
             drawing,
             {
                 headers: {
