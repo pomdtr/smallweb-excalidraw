@@ -11,6 +11,7 @@
   },
   "publish": {
     "include": [
+      "README.md",
       "mod.ts",
       "frontend/dist"
     ]
