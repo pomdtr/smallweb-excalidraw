@@ -3,7 +3,7 @@ import { decodeBase64 } from "@std/encoding";
 import * as path from "@std/path";
 import * as fs from "@std/fs"
 import * as http from "@std/http"
-import config from "./deno.json" with { type: "json" }
+import manifest from "./deno.json" with { type: "json" }
 
 const keys = {
     json: "drawing.excalidraw.json",
@@ -77,12 +77,12 @@ export class Excalidraw {
             const filepath = path.join("frontend/dist", c.req.path === "/" ? "index.html" : c.req.path.slice(1))
 
             // Serve local files in development
-            if (import.meta.dirname) {
+            if (import.meta.filename) {
                 return http.serveFile(c.req.raw, filepath)
             }
 
             // else fetch from jsr and cache
-            const req = new Request(`https://jsr.io/${config.name}/${config.version}/${filepath}`)
+            const req = new Request(`https://jsr.io/${manifest.name}/${manifest.version}/${filepath}`)
             const cached = await cache.match(req)
             if (cached) {
                 return new Response(cached.body, {
@@ -94,8 +94,8 @@ export class Excalidraw {
 
             const resp = await fetch(req)
             if (!resp.ok) {
-                return new Response(null, {
-                    status: resp.status,
+                return new Response("failed to fetch asset from jsr", {
+                    status: http.STATUS_CODE.InternalServerError,
                 })
             }
 
