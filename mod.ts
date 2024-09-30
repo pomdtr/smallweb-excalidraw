@@ -2,16 +2,10 @@ import { Hono } from "hono";
 import * as path from "@std/path";
 import * as http from "@std/http"
 import type { Storage } from "unstorage"
-import manifest from "./deno.json" with { type: "json" }
 import { createStorage } from "unstorage";
 import fsLiteDriver from "unstorage/drivers/fs-lite";
 
 
-const keys = {
-    json: "drawing.json",
-    png: "drawing.png",
-    svg: "drawing.svg",
-};
 
 export type App = {
     fetch: (req: Request) => Response | Promise<Response>;
@@ -21,13 +15,14 @@ export function excalidraw(storage: string | Storage): App {
     // @ts-ignore broken types
     const kv = typeof storage === "string" ? createStorage({ driver: fsLiteDriver({ base: storage }) }) : storage;
 
+
     const app = new Hono();
 
     app.post("/", async (c) => {
         const { json, svg } = await c.req.json();
 
-        kv.set(keys.json, json);
-        kv.set(keys.svg, svg);
+        kv.set("drawing.excalidraw.json", json);
+        kv.set("drawing.svg", svg);
 
         return new Response(null, {
             status: 204,
@@ -35,7 +30,7 @@ export function excalidraw(storage: string | Storage): App {
     });
 
     app.get("/svg", async () => {
-        const svg = await kv.get<string>(keys.svg);
+        const svg = await kv.get<string>("drawing.svg");
         if (!svg) {
             return new Response(null, {
                 status: 404,
@@ -53,7 +48,7 @@ export function excalidraw(storage: string | Storage): App {
     });
 
     app.get("/json", async () => {
-        const drawing = await kv.get(keys.json);
+        const drawing = await kv.get<object>("drawing.excalidraw.json");
         if (!drawing) {
             return new Response(null, {
                 status: 404,
@@ -78,8 +73,7 @@ export function excalidraw(storage: string | Storage): App {
             return http.serveFile(c.req.raw, filepath)
         }
 
-        // else fetch from jsr and cache
-        const req = new Request(`https://jsr.io/${manifest.name}/${manifest.version}/${filepath}`)
+        const req = new Request(new URL(filepath, import.meta.url))
         const cache = await caches.open("jsr")
         const cached = await cache.match(req)
         if (cached) {
