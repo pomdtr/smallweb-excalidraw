@@ -1,5 +1,3 @@
-import { Excalidraw } from "./mod.ts";
+import { excalidraw } from "./mod.ts";
 
-const excalidraw = new Excalidraw("./blobs");
-
-export default excalidraw;
+export default excalidraw("./blobs");
