@@ -9,11 +9,6 @@ const keys = {
     svg: "drawing.svg",
 };
 
-export type ExcalidrawParams = {
-    read: (key: string) => Promise<Uint8Array | null>;
-    write: (key: string, value: Uint8Array) => Promise<void>;
-};
-
 export class Excalidraw {
     constructor(public rootDir: string) {
     }
