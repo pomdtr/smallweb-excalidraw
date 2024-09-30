@@ -24,16 +24,15 @@ function App() {
     "/json",
     async (path) => {
       const resp = await fetch(path);
+      if (resp.status === 404) {
+        setSceneVersion(0);
+        return null;
+      }
       if (!resp.ok) {
         throw new Error("Failed to load initial data");
       }
 
       const blob = await resp.blob();
-      if (blob.size === 0) {
-        setSceneVersion(0);
-        return null;
-      }
-
       const initialData = await loadFromBlob(blob, null, null);
       setSceneVersion(getSceneVersion(initialData.elements));
       return initialData;

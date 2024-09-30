@@ -1,25 +1,26 @@
 {
-    "name": "@smallweb/excalidraw",
-    "version": "0.5.0",
-    "exports": {
-        ".": "./mod.ts"
-    },
-    "license": "MIT",
-    "tasks": {
-        "install": "cd frontend && npm install",
-        "build": "cd frontend && npm run build"
-    },
-    "publish": {
-        "include": [
-            "mod.ts",
-            "frontend/dist"
-        ]
-    },
-    "imports": {
-        "@std/encoding": "jsr:@std/encoding@^1.0.5",
-        "@std/fs": "jsr:@std/fs@^1.0.4",
-        "@std/http": "jsr:@std/http@^1.0.7",
-        "@std/path": "jsr:@std/path@^1.0.6",
-        "hono": "npm:hono@^4.6.3"
-    }
+  "name": "@smallweb/excalidraw",
+  "version": "0.7.1",
+  "exports": {
+    ".": "./mod.ts"
+  },
+  "license": "MIT",
+  "tasks": {
+    "install": "cd frontend && npm install",
+    "build": "cd frontend && npm run build"
+  },
+  "publish": {
+    "include": [
+      "mod.ts",
+      "frontend/dist"
+    ]
+  },
+  "imports": {
+    "@std/encoding": "jsr:@std/encoding@^1.0.5",
+    "@std/fs": "jsr:@std/fs@^1.0.4",
+    "@std/http": "jsr:@std/http@^1.0.7",
+    "@std/path": "jsr:@std/path@^1.0.6",
+    "hono": "npm:hono@^4.6.3",
+    "unstorage": "npm:unstorage@^1.12.0"
+  }
 }

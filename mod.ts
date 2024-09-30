@@ -1,48 +1,49 @@
 import { Hono } from "hono";
-import { decodeBase64 } from "@std/encoding";
 import * as path from "@std/path";
-import * as fs from "@std/fs"
 import * as http from "@std/http"
+import type { Storage } from "unstorage"
 import manifest from "./deno.json" with { type: "json" }
+import { createStorage } from "unstorage";
+import fsLiteDriver from "unstorage/drivers/fs-lite";
+
 
 const keys = {
-    json: "drawing.excalidraw.json",
+    json: "drawing.json",
     png: "drawing.png",
     svg: "drawing.svg",
 };
 
-export function excalidraw(rootDir: string): (req: Request) => Response | Promise<Response> {
+export type App = {
+    fetch: (req: Request) => Response | Promise<Response>;
+}
+
+export function excalidraw(storage: string | Storage): App {
+    // @ts-ignore broken types
+    const kv = typeof storage === "string" ? createStorage({ driver: fsLiteDriver({ base: storage }) }) : storage;
+
     const app = new Hono();
 
     app.post("/", async (c) => {
-        const { json, png, svg } = await c.req.json();
+        const { json, svg } = await c.req.json();
 
-        const jsonBytes = new TextEncoder().encode(json);
-        await Deno.writeFile(path.join(rootDir, keys.json), jsonBytes);
-        const pngBytes = decodeBase64(png);
-        await Deno.writeFile(path.join(rootDir, keys.png), pngBytes);
-        const svgBytes = new TextEncoder().encode(svg);
-        await Deno.writeFile(path.join(rootDir, keys.svg), svgBytes);
+        kv.set(keys.json, json);
+        kv.set(keys.svg, svg);
 
         return new Response(null, {
             status: 204,
         });
     });
 
-    app.get("/png", async () => {
-        return new Response(
-            await Deno.readFile(path.join(rootDir, keys.png)),
-            {
-                headers: {
-                    "Content-Type": "image/png",
-                },
-            },
-        );
-    });
-
     app.get("/svg", async () => {
+        const svg = await kv.get<string>(keys.svg);
+        if (!svg) {
+            return new Response(null, {
+                status: 404,
+            });
+        }
+
         return new Response(
-            await Deno.readFile(path.join(rootDir, keys.svg)),
+            svg,
             {
                 headers: {
                     "Content-Type": "image/svg+xml",
@@ -52,14 +53,15 @@ export function excalidraw(rootDir: string): (req: Request) => Response | Promis
     });
 
     app.get("/json", async () => {
-        if (!await fs.exists(path.join(rootDir, keys.json))) {
+        const drawing = await kv.get(keys.json);
+        if (!drawing) {
             return new Response(null, {
-                status: 204,
+                status: 404,
             });
         }
 
-        return new Response(
-            await Deno.readFile(path.join(rootDir, keys.json)),
+        return Response.json(
+            drawing,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -103,5 +105,5 @@ export function excalidraw(rootDir: string): (req: Request) => Response | Promis
         })
     });
 
-    return app.fetch;
+    return app;
 }

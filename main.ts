@@ -1,5 +1,3 @@
 import { excalidraw } from "./mod.ts";
 
-export default {
-    fetch: excalidraw("./blobs")
-}
+export default excalidraw("./blobs")
