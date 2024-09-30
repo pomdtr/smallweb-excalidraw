@@ -1,7 +1,8 @@
-import { Hono } from "jsr:@hono/hono@4.4.8";
-import { decodeBase64 } from "jsr:@std/encoding@1.0.1";
-import manifest from "./deno.json" with { type: "json" };
-import { join } from "jsr:@std/path@1.0.0/join";
+import { Hono } from "hono";
+import { decodeBase64 } from "@std/encoding";
+import * as path from "@std/path";
+import * as fs from "@std/fs"
+import config from "./deno.json" with { type: "json" }
 
 const keys = {
     json: "drawing.excalidraw.json",
@@ -9,9 +10,11 @@ const keys = {
     svg: "drawing.svg",
 };
 
+const cache = await caches.open("jsr")
+
 export class Excalidraw {
-    constructor(public rootDir: string) {
-    }
+    constructor(public rootDir: string) { }
+
     fetch = (req: Request): Response | Promise<Response> => {
         const app = new Hono();
 
@@ -19,11 +22,11 @@ export class Excalidraw {
             const { json, png, svg } = await c.req.json();
 
             const jsonBytes = new TextEncoder().encode(json);
-            await Deno.writeFile(join(this.rootDir, keys.json), jsonBytes);
+            await Deno.writeFile(path.join(this.rootDir, keys.json), jsonBytes);
             const pngBytes = decodeBase64(png);
-            await Deno.writeFile(join(this.rootDir, keys.png), pngBytes);
+            await Deno.writeFile(path.join(this.rootDir, keys.png), pngBytes);
             const svgBytes = new TextEncoder().encode(svg);
-            await Deno.writeFile(join(this.rootDir, keys.svg), svgBytes);
+            await Deno.writeFile(path.join(this.rootDir, keys.svg), svgBytes);
 
             return new Response(null, {
                 status: 204,
@@ -32,7 +35,7 @@ export class Excalidraw {
 
         app.get("/png", async () => {
             return new Response(
-                await Deno.readFile(join(this.rootDir, keys.png)),
+                await Deno.readFile(path.join(this.rootDir, keys.png)),
                 {
                     headers: {
                         "Content-Type": "image/png",
@@ -43,7 +46,7 @@ export class Excalidraw {
 
         app.get("/svg", async () => {
             return new Response(
-                await Deno.readFile(join(this.rootDir, keys.svg)),
+                await Deno.readFile(path.join(this.rootDir, keys.svg)),
                 {
                     headers: {
                         "Content-Type": "image/svg+xml",
@@ -53,8 +56,14 @@ export class Excalidraw {
         });
 
         app.get("/json", async () => {
+            if (!await fs.exists(path.join(this.rootDir, keys.json))) {
+                return new Response(null, {
+                    status: 204,
+                });
+            }
+
             return new Response(
-                await Deno.readFile(join(this.rootDir, keys.json)),
+                await Deno.readFile(path.join(this.rootDir, keys.json)),
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -64,19 +73,37 @@ export class Excalidraw {
         });
 
         app.get("*", async (c) => {
-            const filepath = c.req.path === "/" ? "index.html" : c.req.path.slice(1);
-            const url = `https://raw.esm.sh/jsr/${manifest.name}@${manifest.version}/frontend/dist/${filepath}`
-            const resp = await fetch(url);
-            if (!resp.ok) {
-                return new Response(null, {
-                    status: 404,
-                });
+            const filepath = path.join("frontend/dist", c.req.path === "/" ? "index.html" : c.req.path.slice(1))
+
+            // Serve local files in development
+            // if (import.meta.dirname) {
+            //     return http.serveFile(c.req.raw, filepath)
+            // }
+
+            // else fetch from jsr and cache
+            const req = new Request(`https://jsr.io/${config.name}/${config.version}/${filepath}`)
+            const cached = await cache.match(req)
+            if (cached) {
+                return new Response(cached.body, {
+                    headers: {
+                        "Content-Type": cached.headers.get("Content-Type") || "text/plain",
+                    }
+                })
             }
 
-            const html = await resp.text();
-            return new Response(html, {
-                headers: resp.headers
-            });
+            const resp = await fetch(req)
+            if (!resp.ok) {
+                return new Response(null, {
+                    status: resp.status,
+                })
+            }
+
+            await cache.put(req, resp.clone())
+            return new Response(resp.body, {
+                headers: {
+                    "Content-Type": resp.headers.get("Content-Type") || "text/plain",
+                }
+            })
         });
 
         return app.fetch(req);

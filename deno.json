@@ -1,12 +1,12 @@
 {
     "name": "@smallweb/excalidraw",
-    "version": "0.4.1",
+    "version": "0.4.5",
     "exports": {
         ".": "./mod.ts"
     },
     "license": "MIT",
     "tasks": {
-        "install-deps": "cd frontend && npm install",
+        "install": "cd frontend && npm install",
         "build": "cd frontend && npm run build"
     },
     "publish": {
@@ -14,5 +14,12 @@
             "mod.ts",
             "frontend/dist"
         ]
+    },
+    "imports": {
+        "@std/encoding": "jsr:@std/encoding@^1.0.5",
+        "@std/fs": "jsr:@std/fs@^1.0.4",
+        "@std/http": "jsr:@std/http@^1.0.7",
+        "@std/path": "jsr:@std/path@^1.0.6",
+        "hono": "npm:hono@^4.6.3"
     }
 }
