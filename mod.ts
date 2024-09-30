@@ -11,13 +11,7 @@ const keys = {
     svg: "drawing.svg",
 };
 
-
-type App = {
-    fetch: (req: Request) => Response | Promise<Response>
-}
-
-
-export function excalidraw(rootDir: string): App {
+export function excalidraw(rootDir: string): (req: Request) => Response | Promise<Response> {
     const app = new Hono();
 
     app.post("/", async (c) => {
@@ -109,5 +103,5 @@ export function excalidraw(rootDir: string): App {
         })
     });
 
-    return app;
+    return app.fetch;
 }
