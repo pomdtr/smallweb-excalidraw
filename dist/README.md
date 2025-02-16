@@ -4,7 +4,7 @@
 
 ```ts
 // main.ts
-import { Excalidraw } from "jsr:@pomdtr/excalidraw";
+import { Excalidraw } from "jsr:@smallweb/excalidraw";
 
 const excalidraw = new Excalidraw();
 
