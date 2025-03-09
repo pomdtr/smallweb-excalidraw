@@ -2,13 +2,14 @@ import {
   Excalidraw,
   exportToBlob,
   exportToSvg,
-  getSceneVersion,
+  hashElementsVersion,
   loadFromBlob,
   serializeAsJSON,
 } from "@excalidraw/excalidraw";
 import React from "react";
 import useSWR from "swr";
-import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
+import "@excalidraw/excalidraw/index.css";
+import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Base64 } from "js-base64";
 
@@ -34,7 +35,7 @@ function App() {
 
       const blob = await resp.blob();
       const initialData = await loadFromBlob(blob, null, null);
-      setSceneVersion(getSceneVersion(initialData.elements));
+      setSceneVersion(hashElementsVersion(initialData.elements));
       return initialData;
     }, { revalidateOnFocus: false, revalidateOnReconnect: false },
   );
@@ -42,7 +43,7 @@ function App() {
   React.useEffect(() => {
     const saveDrawing = async () => {
       const initialVersion = initialData
-        ? getSceneVersion(initialData.elements)
+        ? hashElementsVersion(initialData.elements)
         : 0;
       if (sceneVersion == initialVersion) {
         return;
@@ -105,7 +106,7 @@ function App() {
       excalidrawAPI={(api) => setExcalidrawAPI(api)}
       onChange={(elements) => {
         const previousVersion = sceneVersion;
-        const currentVersion = getSceneVersion(elements);
+        const currentVersion = hashElementsVersion(elements);
         if (currentVersion !== previousVersion) {
           setSceneVersion(currentVersion);
         }
