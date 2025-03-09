@@ -1,6 +1,6 @@
 {
   "name": "@smallweb/excalidraw",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "exports": "./pkg/mod.ts",
   "license": "MIT",
   "tasks": {
