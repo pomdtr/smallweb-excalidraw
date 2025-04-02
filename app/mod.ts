@@ -1,8 +1,7 @@
 import * as path from "@std/path";
 import { Hono } from "hono";
 import * as fs from "@std/fs"
-import manifest from "./deno.json" with { type: "json" };
-import { serveDir } from "@std/http/file-server";
+import { serveStatic } from "hono/deno"
 
 export type ExcalidrawOptions = {
     rootDir?: string;
@@ -61,31 +60,9 @@ export class Excalidraw {
                     },
                 );
             })
-            .get("*", async (c) => {
-                if (import.meta.dirname) {
-                    return serveDir(c.req.raw, {
-                        fsRoot: path.join(import.meta.dirname, "static"),
-                        quiet: true,
-                    });
-                }
-
-                const pathname = c.req.path == "/" ? "/index.html" : c.req.path;
-                const target = `https://raw.esm.sh/jsr/${manifest.name}@${manifest.version}/pkg/static${pathname}`
-                const req = new Request(target, c.req.raw)
-
-                const cache = await caches.open("excalidraw");
-                const cached = await cache.match(req);
-                if (cached) {
-                    return cached;
-                }
-
-                const res = await fetch(req);
-                if (res.ok) {
-                    cache.put(req, res.clone());
-                }
-
-                return res;
-            })
+            .get("*", serveStatic({
+                root: "./static",
+            }))
     }
 
     fetch: (req: Request) => Response | Promise<Response> = (req) => this.server.fetch(req)
