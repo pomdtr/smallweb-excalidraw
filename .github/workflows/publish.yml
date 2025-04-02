@@ -23,6 +23,6 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./app
+          publish_dir: ./dist
           publish_branch: smallweb
           enable_jekyll: true

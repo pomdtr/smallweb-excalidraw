@@ -1,6 +1,6 @@
 {
     "deno.enable": false,
     "deno.enablePaths": [
-        "app"
+        "dist"
     ]
 }
