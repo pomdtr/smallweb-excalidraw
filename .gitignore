@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+dist
+app/static
 *.local
 
 # Editor directories and files
@@ -21,4 +23,3 @@ node_modules
 *.sln
 *.sw?
 
-dist

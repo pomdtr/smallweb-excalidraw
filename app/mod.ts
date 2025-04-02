@@ -64,7 +64,8 @@ export class Excalidraw {
             .get("*", async (c) => {
                 if (import.meta.dirname) {
                     return serveDir(c.req.raw, {
-                        fsRoot: path.join(import.meta.dirname, "./frontend/dist"),
+                        fsRoot: path.join(import.meta.dirname, "static"),
+                        quiet: true,
                     });
                 }
 

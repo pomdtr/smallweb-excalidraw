@@ -1,6 +1,6 @@
 {
-    "deno.enable": true,
-    "deno.disablePaths": [
-        "frontend"
+    "deno.enable": false,
+    "deno.enablePaths": [
+        "pkg"
     ]
 }

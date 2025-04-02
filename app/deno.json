@@ -1,7 +1,7 @@
 {
   "name": "@smallweb/excalidraw",
-  "version": "0.10.0",
-  "exports": "./pkg/mod.ts",
+  "version": "0.10.2",
+  "exports": "./mod.ts",
   "license": "MIT",
   "tasks": {
     "build": "cd frontend && deno task build"
@@ -9,10 +9,8 @@
   "publish": {
     "include": [
       "README.md",
-      "pkg"
-    ],
-    "exclude": [
-      "!pkg/static"
+      "mod.ts",
+      "static"
     ]
   },
   "imports": {
