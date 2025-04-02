@@ -1,6 +1,6 @@
 {
-    "deno.enable": false,
-    "deno.enablePaths": [
-        "dist"
+    "deno.enable": true,
+    "deno.disablePaths": [
+        "frontend"
     ]
 }
