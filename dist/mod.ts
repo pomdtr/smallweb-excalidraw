@@ -1,7 +1,7 @@
 import * as path from "@std/path";
-import { Hono } from "hono";
+import { Hono } from "@hono/hono";
 import * as fs from "@std/fs"
-import { serveStatic } from "hono/deno"
+import { serveStatic } from "https://esm.town/v/pomdtr/hono-utils@39-main/mod.ts"
 
 export type ExcalidrawOptions = {
     rootDir?: string;
@@ -61,7 +61,7 @@ export class Excalidraw {
                 );
             })
             .get("*", serveStatic({
-                root: "./static",
+                root: import.meta.resolve("./static"),
             }))
     }
 
