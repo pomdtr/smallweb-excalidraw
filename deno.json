@@ -1,0 +1,28 @@
+{
+  "name": "@pomdtr/excalidraw",
+  "version": "0.0.1",
+  "description": "Excalidraw integration for SmallWeb",
+  "license": "MIT",
+  "exports": "./pkg/mod.ts",
+  "publish": {
+    "include": [
+      "pkg",
+      "README.md"
+    ]
+  },
+  "imports": {
+    "@hono/hono": "jsr:@hono/hono@^4.7.5",
+    "@std/fs": "jsr:@std/fs@^1.0.4",
+    "@std/http": "jsr:@std/http@^1.0.12",
+    "@std/path": "jsr:@std/path@^1.0.6"
+  },
+  "tasks": {
+    "build": "cd frontend && npm run build",
+    "embed": {
+      "command": "deno run -A jsr:@smallweb/embed@0.0.15 frontend/dist pkg/embed",
+      "dependencies": [
+        "build"
+      ]
+    }
+  }
+}

@@ -1,8 +1,0 @@
-{
-  "imports": {
-    "@hono/hono": "jsr:@hono/hono@^4.7.5",
-    "@std/fs": "jsr:@std/fs@^1.0.4",
-    "@std/http": "jsr:@std/http@^1.0.12",
-    "@std/path": "jsr:@std/path@^1.0.6"
-  }
-}

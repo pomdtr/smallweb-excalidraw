@@ -1,4 +1,4 @@
-import { Excalidraw } from "./mod.ts";
+import { Excalidraw } from "./pkg/mod.ts";
 
 const excalidraw = new Excalidraw();
 

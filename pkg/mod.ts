@@ -1,7 +1,7 @@
 import * as path from "@std/path";
 import { Hono } from "@hono/hono";
 import * as fs from "@std/fs"
-import { serveStatic } from "https://esm.town/v/pomdtr/hono-utils@39-main/mod.ts"
+import embed from "./embed/mod.ts"
 
 export type ExcalidrawOptions = {
     rootDir?: string;
@@ -60,9 +60,9 @@ export class Excalidraw {
                     },
                 );
             })
-            .get("*", serveStatic({
-                root: import.meta.resolve("./static"),
-            }))
+            .get("*", (c) => {
+                return embed.serve(c.req.raw)
+            })
     }
 
     fetch: (req: Request) => Response | Promise<Response> = (req) => this.server.fetch(req)
